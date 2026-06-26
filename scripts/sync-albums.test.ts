@@ -42,6 +42,14 @@ describe('parseDate', () => {
   it('prefers full date over month-only when both could match', () => {
     assert.equal(parseDate('2024-08-03 Wolin'), '2024-08-03');
   });
+
+  it('parses start date from a day-range prefix YYYY-MM-DD-DD', () => {
+    assert.equal(parseDate('2021-01-23-25 Wolin'), '2021-01-23');
+  });
+
+  it('parses start date from a day-range with no trailing text', () => {
+    assert.equal(parseDate('2021-01-23-25'), '2021-01-23');
+  });
 });
 
 describe('extractTitle', () => {
@@ -88,6 +96,14 @@ describe('displayTitle', () => {
 
   it('returns original title when title is only a date (no name)', () => {
     assert.equal(displayTitle('2024-08-03'), '2024-08-03');
+  });
+
+  it('strips YYYY-MM-DD-DD range prefix leaving only the name', () => {
+    assert.equal(displayTitle('2021-01-23-25 Wolin'), 'Wolin');
+  });
+
+  it('strips YYYY-MM-DD-DD with no trailing name, returns original', () => {
+    assert.equal(displayTitle('2021-01-23-25'), '2021-01-23-25');
   });
 });
 

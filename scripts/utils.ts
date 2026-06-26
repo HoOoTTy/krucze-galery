@@ -44,9 +44,10 @@ export function parseDate(title: string): string | null {
   return null;
 }
 
-// Strips a leading date prefix (YYYY-MM-DD, YYYY.MM.DD, YYYY-MM, YYYY.MM) from the title.
+// Strips a leading date prefix from the title, including optional end-day for ranges
+// e.g. YYYY-MM-DD-DD (2021-01-23-25) or YYYY-MM-DD, YYYY.MM.DD, YYYY-MM, YYYY.MM.
 export function displayTitle(title: string): string {
-  const stripped = title.replace(/^\d{4}[-.](\d{2})([-.](\d{2}))?\s*/, '').trim();
+  const stripped = title.replace(/^\d{4}[-.]\d{2}(?:[-.]\d{2}(?:-\d{2})?)?\s*/, '').trim();
   return stripped || title;
 }
 
