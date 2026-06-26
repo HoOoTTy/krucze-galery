@@ -242,12 +242,12 @@ main { padding: 1.25rem 1.5rem 3rem; }
 /* ── Mobile ── */
 
 @media (max-width: 600px) {
+  /* display:contents makes site-header transparent to layout so its children
+     (logo-link and toolbar) are treated as direct children of <body>.
+     This allows .toolbar to be sticky across the whole page, not just within
+     the header's bounds. */
   .site-header {
-    display: block;
-    position: static;
-    padding: 0;
-    border-bottom: none;
-    background: transparent;
+    display: contents;
   }
 
   .logo-link {
