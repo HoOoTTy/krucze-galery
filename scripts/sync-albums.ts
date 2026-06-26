@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import https from 'https';
 import { join } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -52,12 +53,15 @@ function extractMeta(html: string, property: string): string | null {
 }
 
 function extractTitle(html: string): string | null {
-  return (
-    extractMeta(html, 'og:title') ??
-    extractMeta(html, 'twitter:title') ??
-    html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]?.trim() ??
-    null
-  );
+  // og:title contains "Album name · date 📸" — strip the suffix
+  const ogTitle = extractMeta(html, 'og:title');
+  if (ogTitle) return ogTitle.replace(/\s*·.*$/, '').trim();
+
+  // <title> contains "Album name - Google Photos" — strip the suffix
+  const pageTitle = html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]?.trim();
+  if (pageTitle) return pageTitle.replace(/\s*-\s*Google Photos$/i, '').trim();
+
+  return null;
 }
 
 function extractCoverUrl(html: string): string | null {
@@ -81,13 +85,25 @@ function makeSearchText(title: string): string {
   return title.toLowerCase().replace(/[–—]/g, '-');
 }
 
+// Google Photos short URLs (photos.app.goo.gl) return 302 only to minimal UAs.
+// Full browser UAs get a Firebase DurableDeepLink page (200) with no metadata.
+// Fix: resolve the short URL with a minimal UA first, then fetch the real album page.
+function resolveShortUrl(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, res => {
+      resolve(res.headers.location ?? url);
+      res.destroy();
+    }).on('error', reject);
+  });
+}
+
 async function fetchHtml(url: string): Promise<string> {
-  const res = await fetch(url, {
+  const resolvedUrl = await resolveShortUrl(url);
+  const res = await fetch(resolvedUrl, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       Accept: 'text/html,application/xhtml+xml',
     },
-    redirect: 'follow',
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.text();

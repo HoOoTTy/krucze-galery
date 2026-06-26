@@ -222,10 +222,10 @@ main { padding: 1.25rem 1.5rem 3rem; }
     order: -1;
     width: 100%;
     justify-content: center;
-    padding-bottom: 4px;
+    margin-bottom: -4px;
   }
 
-  .logo { height: 72px; }
+  .logo { height: 96px; }
 
   .search-wrap { flex: 1 1 100%; }
 
