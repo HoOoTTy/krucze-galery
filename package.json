@@ -1,0 +1,14 @@
+{
+  "name": "krucze-galery",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "sync-albums": "tsx scripts/sync-albums.ts",
+    "build": "mkdir -p dist && cp -r public/* dist/",
+    "dev": "npx serve public"
+  },
+  "devDependencies": {
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}

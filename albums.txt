@@ -1,0 +1,8 @@
+# Dodaj URL-e albumów Google Photos — jeden na linię
+# Linie zaczynające się od "#" są komentarzami i są ignorowane
+# Puste linie są ignorowane
+#
+# Format nazwy albumu w Google Photos: YYYY-MM-DD Nazwa albumu
+# Przykład: 2024-08-03 Wolin - Walki
+
+# https://photos.app.goo.gl/twoj-album
